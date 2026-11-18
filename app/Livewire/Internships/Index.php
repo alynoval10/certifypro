@@ -12,6 +12,7 @@ use App\Models\Teacher;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -77,6 +78,7 @@ class Index extends Component
         $yearId = (int) ($this->batch['academic_year_id'] ?? 0);
         $eligible = Student::query()
             ->whereKey($studentId)
+            ->where('status', 'active')
             ->whereDoesntHave('internships', fn (Builder $query) => $query->where('academic_year_id', $yearId))
             ->exists();
         if ($yearId > 0 && $eligible && ! in_array($studentId, $this->selectedStudentIds, true)) {
@@ -107,6 +109,11 @@ class Index extends Component
         $company = Company::query()->findOrFail($validated['batch']['company_id']);
         $academicYear = AcademicYear::query()->findOrFail($validated['batch']['academic_year_id']);
         $teacher = Teacher::query()->find($validated['batch']['school_supervisor_id'] ?? null);
+        if (Student::query()->whereIn('id', $validated['selectedStudentIds'])->where('status', 'active')->count() !== count($validated['selectedStudentIds'])) {
+            $this->addError('selectedStudentIds', 'Siswa yang berstatus Lulus tidak dapat ditempatkan pada Prakerin baru.');
+
+            return;
+        }
         $createdCount = 0;
         DB::transaction(function () use ($validated, $company, $academicYear, $teacher, &$createdCount): void {
             foreach ($validated['selectedStudentIds'] as $studentId) {
@@ -165,8 +172,13 @@ class Index extends Component
 
             return;
         }
+        $existingStudentId = $internship->exists ? $internship->student_id : null;
         $data = $this->validate([
-            'form.student_id' => ['required', 'integer', 'exists:students,id'],
+            'form.student_id' => [
+                'required',
+                'integer',
+                Rule::exists('students', 'id')->where(fn ($query) => $query->where('status', 'active')->orWhere('id', $existingStudentId ?? 0)),
+            ],
             'form.company_id' => ['required', 'integer', 'exists:companies,id'],
             'form.academic_year_id' => ['required', 'integer', 'exists:academic_years,id'],
             'form.department' => ['nullable', 'string', 'max:120'],
@@ -238,12 +250,14 @@ class Index extends Component
         return view('livewire.internships.index', [
             'internships' => $internships,
             'readyInternshipIds' => $readyInternshipIds,
-            'students' => Student::query()->orderBy('name')->get(),
+            'students' => Student::query()
+                ->where(fn (Builder $query) => $query->where('status', 'active')->orWhereKey($this->form['student_id'] ?? 0))
+                ->orderBy('name')->get(),
             'companies' => Company::query()->orderBy('name')->get(),
             'academicYears' => AcademicYear::query()->orderByDesc('starts_on')->get(),
             'teachers' => Teacher::query()->orderBy('name')->get(),
             'activeAcademicYear' => AcademicYear::active(),
-            'availableStudents' => Student::query()->whereDoesntHave('internships', fn (Builder $query) => $query->where('academic_year_id', $this->batch['academic_year_id'] ?? AcademicYear::active()?->id))
+            'availableStudents' => Student::query()->where('status', 'active')->whereDoesntHave('internships', fn (Builder $query) => $query->where('academic_year_id', $this->batch['academic_year_id'] ?? AcademicYear::active()?->id))
                 ->when(trim($this->availableStudentSearch) !== '', function (Builder $query): void {
                     $search = trim($this->availableStudentSearch);
                     $query->where(fn (Builder $students) => $students->where('name', 'like', "%{$search}%")->orWhere('student_number', 'like', "%{$search}%"));

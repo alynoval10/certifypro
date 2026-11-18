@@ -114,23 +114,30 @@ class StudentController extends Controller
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Peserta Didik');
-        $sheet->fromArray(['NIS / NISN', 'Nama', 'Kelas', 'Jurusan', 'Jenis Kelamin (L/P)', 'Email', 'Telepon', 'Alamat'], null, 'A1');
-        $sheet->getStyle('A1:H1')->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');
-        $sheet->getStyle('A1:H1')->getFill()->setFillType('solid')->getStartColor()->setARGB('FF4F46E5');
+        $sheet->fromArray(['NIS / NISN', 'Nama', 'Status (Aktif/Lulus)', 'Kelas', 'Jurusan', 'Jenis Kelamin (L/P)', 'Email', 'Telepon', 'Alamat'], null, 'A1');
+        $sheet->getStyle('A1:I1')->getFont()->setBold(true)->getColor()->setARGB('FFFFFFFF');
+        $sheet->getStyle('A1:I1')->getFill()->setFillType('solid')->getStartColor()->setARGB('FF4F46E5');
         $sheet->freezePane('A2');
-        $sheet->setAutoFilter('A1:H1');
+        $sheet->setAutoFilter('A1:I1');
         $sheet->getStyle('A:A')->getNumberFormat()->setFormatCode('@');
-        $sheet->getStyle('G:G')->getNumberFormat()->setFormatCode('@');
-        $genderValidation = $sheet->getCell('E2')->getDataValidation();
+        $sheet->getStyle('H:H')->getNumberFormat()->setFormatCode('@');
+        $statusValidation = $sheet->getCell('C2')->getDataValidation();
+        $statusValidation->setType(DataValidation::TYPE_LIST)
+            ->setErrorStyle(DataValidation::STYLE_STOP)
+            ->setAllowBlank(true)
+            ->setShowDropDown(false)
+            ->setFormula1('"Aktif,Lulus"');
+        $genderValidation = $sheet->getCell('F2')->getDataValidation();
         $genderValidation->setType(DataValidation::TYPE_LIST)
             ->setErrorStyle(DataValidation::STYLE_STOP)
             ->setAllowBlank(true)
             ->setShowDropDown(false)
             ->setFormula1('"L,P"');
         for ($row = 3; $row <= 2001; $row++) {
-            $sheet->getCell('E'.$row)->setDataValidation(clone $genderValidation);
+            $sheet->getCell('C'.$row)->setDataValidation(clone $statusValidation);
+            $sheet->getCell('F'.$row)->setDataValidation(clone $genderValidation);
         }
-        foreach (range('A', 'H') as $column) {
+        foreach (range('A', 'I') as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
         $instructions = $spreadsheet->createSheet();
@@ -139,6 +146,7 @@ class StudentController extends Controller
             ['Panduan impor peserta didik'],
             ['Isi data pada lembar Peserta Didik. Jangan ubah nama kolom pada baris pertama.'],
             ['Kolom wajib: NIS / NISN, Nama, Kelas, dan Jurusan.'],
+            ['Status opsional: Aktif atau Lulus. Kosong akan dianggap Aktif.'],
             ['Kolom opsional: Jenis Kelamin (L/P), Email, Telepon, dan Alamat.'],
             ['NIS/NISN tidak boleh duplikat. Baris yang tidak valid akan dilewati dan dilaporkan.'],
             ['Kelas dan jurusan baru pada file akan otomatis ditambahkan ke data master.'],

@@ -28,6 +28,7 @@ class StudentImportService
         $aliases = [
             'student_number' => ['nisnisn', 'nis', 'nisn'],
             'name' => ['nama', 'namalengkap'],
+            'status' => ['status', 'statussiswa'],
             'class_name' => ['kelas'],
             'major' => ['jurusan', 'programkeahlian'],
             'gender' => ['jeniskelaminlp', 'jeniskelamin', 'gender'],
@@ -67,6 +68,7 @@ class StudentImportService
                 continue;
             }
 
+            $data['status'] ??= 'aktif';
             $data['gender'] = match (mb_strtoupper($data['gender'] ?? '')) {
                 'L', 'LAKI-LAKI', 'LAKI LAKI', 'M' => 'L',
                 'P', 'PEREMPUAN', 'F' => 'P',
@@ -74,9 +76,15 @@ class StudentImportService
                 default => $data['gender'],
             };
             $data['email'] = $data['email'] !== '' ? $data['email'] : null;
+            $data['status'] = match (mb_strtolower(trim($data['status']))) {
+                '', 'aktif', 'active' => 'active',
+                'lulus', 'lulus sekolah', 'graduated', 'alumni' => 'graduated',
+                default => $data['status'],
+            };
             $validator = Validator::make($data, [
                 'student_number' => ['required', 'string', 'max:30', 'unique:students,student_number'],
                 'name' => ['required', 'string', 'max:255'],
+                'status' => ['required', Rule::in(['active', 'graduated'])],
                 'class_name' => ['required', 'string', 'max:50'],
                 'major' => ['required', 'string', 'max:120'],
                 'gender' => ['nullable', Rule::in(['L', 'P'])],
@@ -108,6 +116,7 @@ class StudentImportService
             Student::query()->create([
                 'student_number' => $data['student_number'],
                 'name' => $data['name'],
+                'status' => $data['status'],
                 'class_id' => $class->id,
                 'major_id' => $major->id,
                 'class_name' => $class->name,

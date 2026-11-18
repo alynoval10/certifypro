@@ -46,7 +46,7 @@ const syncThemeControls = () => {
         button.setAttribute('aria-label', isDark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
     });
     themeIcons.forEach((icon) => {
-        icon.classList.toggle('hidden', icon.dataset.themeIcon === (isDark ? 'sun' : 'moon'));
+        icon.classList.toggle('hidden', icon.dataset.themeIcon === (isDark ? 'moon' : 'sun'));
     });
 };
 

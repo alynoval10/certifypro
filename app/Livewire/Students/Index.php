@@ -23,6 +23,8 @@ class Index extends Component
     #[Url(as: 'q')]
     public string $search = '';
 
+    public string $statusFilter = '';
+
     public bool $showForm = false;
 
     #[Locked]
@@ -50,6 +52,11 @@ class Index extends Component
         $this->resetPage();
     }
 
+    public function updatedStatusFilter(): void
+    {
+        $this->resetPage();
+    }
+
     public function create(): void
     {
         $this->editingId = null;
@@ -61,7 +68,7 @@ class Index extends Component
     {
         $student = Student::query()->findOrFail($studentId);
         $this->editingId = $student->id;
-        $this->form = $student->only(['student_number', 'name', 'class_id', 'major_id', 'gender', 'email', 'phone', 'address']);
+        $this->form = $student->only(['student_number', 'name', 'status', 'class_id', 'major_id', 'gender', 'email', 'phone', 'address']);
         $this->showForm = true;
     }
 
@@ -71,6 +78,7 @@ class Index extends Component
         $validated = $this->validate([
             'form.student_number' => ['required', 'string', 'max:30', Rule::unique('students', 'student_number')->ignore($student)],
             'form.name' => ['required', 'string', 'max:255'],
+            'form.status' => ['required', Rule::in(['active', 'graduated'])],
             'form.class_id' => ['required', 'integer', 'exists:school_classes,id'],
             'form.major_id' => ['required', 'integer', 'exists:majors,id'],
             'form.gender' => ['nullable', Rule::in(['L', 'P'])],
@@ -138,6 +146,7 @@ class Index extends Component
                         ->orWhereHas('majorRelation', fn (Builder $majors) => $majors->where('name', 'like', "%{$search}%"));
                 });
             })
+            ->when(in_array($this->statusFilter, ['active', 'graduated'], true), fn (Builder $query) => $query->where('status', $this->statusFilter))
             ->orderBy('name')
             ->paginate(12);
 
@@ -152,6 +161,7 @@ class Index extends Component
     {
         $this->form = [
             'student_number' => '', 'name' => '', 'class_id' => '', 'major_id' => '',
+            'status' => 'active',
             'gender' => '', 'email' => '', 'phone' => '', 'address' => '',
         ];
     }
