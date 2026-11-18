@@ -30,6 +30,10 @@
                         <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><path d="M7 3.75h7l4 4v12.5H7a2 2 0 0 1-2-2v-12.5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3.75v4h4M8.5 13h7M8.5 16.5h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
                         <span class="flex-1">Sertifikat</span>
                     </a>
+                    <a wire:navigate href="{{ route('certificate-templates.index') }}" @class(['sidebar-link', 'sidebar-link-active' => request()->routeIs('certificate-templates.*')])>
+                        <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 12h4M8 16h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                        <span class="flex-1">Template sertifikat</span>
+                    </a>
                     <a wire:navigate href="{{ route('students.index') }}" @class(['sidebar-link', 'sidebar-link-active' => request()->routeIs('students.*')])>
                         <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><circle cx="9" cy="8" r="3.25" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 19.5v-1.25A4.25 4.25 0 0 1 7.75 14h2.5a4.25 4.25 0 0 1 4.25 4.25v1.25M15.5 5.15a3.25 3.25 0 0 1 0 5.7M17 14.2a4.25 4.25 0 0 1 3.5 4.18v1.12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
                         <span class="flex-1">Peserta didik</span>

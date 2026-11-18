@@ -8,6 +8,7 @@ use App\Models\Internship;
 use App\Models\Student;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
@@ -31,6 +32,12 @@ class Index extends Component
 
     public array $form = [];
 
+    public array $batch = [];
+
+    public array $selectedStudentIds = [];
+
+    public string $availableStudentSearch = '';
+
     public function mount(?Internship $internship = null): void
     {
         $this->resetForm();
@@ -49,6 +56,78 @@ class Index extends Component
     public function updatedStatusFilter(): void
     {
         $this->resetPage();
+    }
+
+    public function updatedBatch(mixed $value, ?string $key = null): void
+    {
+        if ($key === 'company_id') {
+            $company = Company::query()->find($value);
+            $this->batch['mentor_name'] = $company?->mentor_name ?? '';
+            $this->batch['department'] = $company?->industry ?? '';
+        }
+        if (in_array($key, ['company_id', 'academic_year_id'], true)) {
+            $this->selectedStudentIds = [];
+        }
+    }
+
+    public function addStudentToSelection(int $studentId): void
+    {
+        $yearId = (int) ($this->batch['academic_year_id'] ?? 0);
+        $eligible = Student::query()
+            ->whereKey($studentId)
+            ->whereDoesntHave('internships', fn (Builder $query) => $query->where('academic_year_id', $yearId))
+            ->exists();
+        if ($yearId > 0 && $eligible && ! in_array($studentId, $this->selectedStudentIds, true)) {
+            $this->selectedStudentIds[] = $studentId;
+        }
+    }
+
+    public function removeStudentFromSelection(int $studentId): void
+    {
+        $this->selectedStudentIds = array_values(array_filter(
+            $this->selectedStudentIds,
+            fn (int $selectedId): bool => $selectedId !== $studentId,
+        ));
+    }
+
+    public function saveBatchPlacement(): void
+    {
+        $validated = $this->validate([
+            'batch.company_id' => ['required', 'integer', 'exists:companies,id'],
+            'batch.academic_year_id' => ['required', 'integer', 'exists:academic_years,id'],
+            'batch.start_date' => ['required', 'date', 'before_or_equal:batch.end_date'],
+            'batch.end_date' => ['required', 'date', 'after_or_equal:batch.start_date'],
+            'batch.department' => ['nullable', 'string', 'max:120'],
+            'batch.school_supervisor' => ['nullable', 'string', 'max:255'],
+            'selectedStudentIds' => ['required', 'array', 'min:1'],
+            'selectedStudentIds.*' => ['required', 'integer', 'distinct', 'exists:students,id'],
+        ]);
+        $company = Company::query()->findOrFail($validated['batch']['company_id']);
+        $academicYear = AcademicYear::query()->findOrFail($validated['batch']['academic_year_id']);
+        $createdCount = 0;
+        DB::transaction(function () use ($validated, $company, $academicYear, &$createdCount): void {
+            foreach ($validated['selectedStudentIds'] as $studentId) {
+                if (Internship::query()->where('student_id', $studentId)->where('academic_year_id', $academicYear->id)->exists()) {
+                    continue;
+                }
+                Internship::query()->create([
+                    'student_id' => $studentId,
+                    'company_id' => $company->id,
+                    'academic_year_id' => $academicYear->id,
+                    'academic_year' => $academicYear->name,
+                    'department' => $validated['batch']['department'] ?? $company->industry,
+                    'mentor_name' => $company->mentor_name,
+                    'school_supervisor' => $validated['batch']['school_supervisor'] ?? null,
+                    'start_date' => $validated['batch']['start_date'],
+                    'end_date' => $validated['batch']['end_date'],
+                    'status' => 'ongoing',
+                ]);
+                $createdCount++;
+            }
+        });
+
+        $this->selectedStudentIds = [];
+        session()->flash('success', $createdCount.' siswa berhasil ditempatkan di '.$company->name.'.');
     }
 
     public function create(): void
@@ -146,6 +225,12 @@ class Index extends Component
             'companies' => Company::query()->orderBy('name')->get(),
             'academicYears' => AcademicYear::query()->orderByDesc('starts_on')->get(),
             'activeAcademicYear' => AcademicYear::active(),
+            'availableStudents' => Student::query()->whereDoesntHave('internships', fn (Builder $query) => $query->where('academic_year_id', $this->batch['academic_year_id'] ?? AcademicYear::active()?->id))
+                ->when(trim($this->availableStudentSearch) !== '', function (Builder $query): void {
+                    $search = trim($this->availableStudentSearch);
+                    $query->where(fn (Builder $students) => $students->where('name', 'like', "%{$search}%")->orWhere('student_number', 'like', "%{$search}%"));
+                })->orderBy('name')->limit(300)->get(),
+            'selectedStudents' => Student::query()->whereIn('id', $this->selectedStudentIds)->orderBy('name')->get(),
         ])->layout('layouts.app', ['title' => 'Data Prakerin', 'breadcrumb' => 'Data Prakerin']);
     }
 
@@ -155,6 +240,15 @@ class Index extends Component
             'student_id' => '', 'company_id' => '', 'academic_year_id' => AcademicYear::active()?->id ?? '',
             'department' => '', 'mentor_name' => '', 'school_supervisor' => '', 'start_date' => '',
             'end_date' => '', 'final_note' => '', 'status' => 'ongoing',
+        ];
+        $this->batch = [
+            'company_id' => '',
+            'academic_year_id' => AcademicYear::active()?->id ?? '',
+            'department' => '',
+            'mentor_name' => '',
+            'school_supervisor' => '',
+            'start_date' => '',
+            'end_date' => '',
         ];
     }
 }

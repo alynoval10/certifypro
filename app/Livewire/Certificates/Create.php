@@ -3,6 +3,7 @@
 namespace App\Livewire\Certificates;
 
 use App\Models\Certificate;
+use App\Models\CertificateTemplate;
 use App\Models\Internship;
 use App\Models\ScoreComponent;
 use Illuminate\Contracts\View\View;
@@ -47,6 +48,7 @@ class Create extends Component
             $predicate = $score >= 90 ? 'Sangat Baik' : ($score >= 80 ? 'Baik' : 'Cukup');
             $certificate = $internship->certificate()->create([
                 'verification_code' => (string) Str::uuid(),
+                'certificate_template_id' => CertificateTemplate::query()->where('is_active', true)->value('id'),
                 'issued_at' => today(),
                 'predicate' => $predicate,
                 'description' => $validated['description'] ?: 'Telah menyelesaikan kegiatan Praktik Kerja Industri dengan baik.',

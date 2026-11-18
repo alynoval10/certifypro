@@ -9,6 +9,7 @@ class Certificate extends Model
 {
     protected $fillable = [
         'internship_id',
+        'certificate_template_id',
         'certificate_number',
         'verification_code',
         'issued_at',
@@ -30,5 +31,10 @@ class Certificate extends Model
     public function internship(): BelongsTo
     {
         return $this->belongsTo(Internship::class);
+    }
+
+    public function template(): BelongsTo
+    {
+        return $this->belongsTo(CertificateTemplate::class, 'certificate_template_id');
     }
 }

@@ -19,6 +19,9 @@ class Index extends Component
     #[Url(as: 'status', except: '')]
     public string $statusFilter = '';
 
+    /** @var list<int|string> */
+    public array $selectedIds = [];
+
     public function updatedSearch(): void
     {
         $this->resetPage();

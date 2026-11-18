@@ -1,9 +1,3 @@
-@extends('layouts.app')
-
-@section('title', 'Tentang Aplikasi')
-@section('breadcrumb', 'Tentang Aplikasi')
-
-@section('content')
     <div class="mx-auto max-w-5xl">
         <section class="relative overflow-hidden rounded-[28px] bg-slate-950 px-6 py-10 text-white sm:px-10 sm:py-14">
             <div class="absolute -right-20 -top-28 size-80 rounded-full bg-indigo-500/30 blur-3xl"></div>
@@ -36,5 +30,8 @@
                 <div class="rounded-xl bg-slate-50 p-5"><p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">Informasi aplikasi</p><dl class="mt-4 grid gap-3 text-xs"><div class="flex justify-between gap-3"><dt class="text-slate-500">Nama</dt><dd class="font-semibold text-slate-800">CertifyPro</dd></div><div class="flex justify-between gap-3"><dt class="text-slate-500">Fokus</dt><dd class="font-semibold text-slate-800">Manajemen Prakerin</dd></div><div class="flex justify-between gap-3"><dt class="text-slate-500">Versi</dt><dd class="font-semibold text-slate-800">1.0.0</dd></div><div class="flex justify-between gap-3"><dt class="text-slate-500">Status</dt><dd class="inline-flex items-center gap-1.5 font-semibold text-emerald-700"><span class="size-1.5 rounded-full bg-emerald-500"></span>Pengembangan</dd></div></dl></div>
             </div>
         </section>
+        <section class="mt-5 flex flex-col justify-between gap-3 rounded-2xl border border-indigo-100 bg-indigo-50/70 p-5 sm:flex-row sm:items-center sm:px-7">
+            <div><p class="text-[10px] font-bold uppercase tracking-[0.16em] text-indigo-600">Pembuat aplikasi</p><a href="https://www.instagram.com/alynoval/" target="_blank" rel="noopener noreferrer" class="mt-1 inline-flex text-sm font-bold text-slate-900 hover:text-indigo-700">Noval Aly, S.T. ↗</a></div>
+            <a href="https://www.instagram.com/alynoval/" target="_blank" rel="noopener noreferrer" class="primary-button">Kunjungi Instagram ↗</a>
+        </section>
     </div>
-@endsection

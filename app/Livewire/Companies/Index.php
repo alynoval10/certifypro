@@ -3,16 +3,19 @@
 namespace App\Livewire\Companies;
 
 use App\Models\Company;
+use App\Services\CompanySpreadsheetService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithFileUploads;
     use WithPagination;
 
     #[Url(as: 'q')]
@@ -24,6 +27,11 @@ class Index extends Component
     public ?int $editingId = null;
 
     public array $form = [];
+
+    public $spreadsheet = null;
+
+    /** @var array{imported: int, skipped: int, errors: list<string>}|null */
+    public ?array $importSummary = null;
 
     public function mount(?Company $company = null): void
     {
@@ -51,7 +59,7 @@ class Index extends Component
     {
         $company = Company::query()->findOrFail($companyId);
         $this->editingId = $company->id;
-        $this->form = $company->only(['name', 'industry', 'contact_name', 'email', 'phone', 'address']);
+        $this->form = $company->only(['name', 'industry', 'leader_name', 'mentor_name', 'contact_name', 'email', 'phone', 'address']);
         $this->showForm = true;
     }
 
@@ -61,6 +69,8 @@ class Index extends Component
         $validated = $this->validate([
             'form.name' => ['required', 'string', 'max:255', Rule::unique('companies', 'name')->ignore($company)],
             'form.industry' => ['nullable', 'string', 'max:120'],
+            'form.leader_name' => ['nullable', 'string', 'max:255'],
+            'form.mentor_name' => ['nullable', 'string', 'max:255'],
             'form.contact_name' => ['nullable', 'string', 'max:255'],
             'form.email' => ['nullable', 'email', 'max:255'],
             'form.phone' => ['nullable', 'string', 'max:30'],
@@ -84,6 +94,14 @@ class Index extends Component
         }
         $company->delete();
         session()->flash('success', 'Data mitra berhasil dihapus.');
+    }
+
+    public function importSpreadsheet(): void
+    {
+        $this->validate(['spreadsheet' => ['required', 'file', 'extensions:xlsx', 'max:10240']]);
+        $this->importSummary = app(CompanySpreadsheetService::class)->import($this->spreadsheet);
+        $this->reset('spreadsheet');
+        $this->resetPage();
     }
 
     public function closeForm(): void
@@ -117,6 +135,6 @@ class Index extends Component
 
     private function resetForm(): void
     {
-        $this->form = ['name' => '', 'industry' => '', 'contact_name' => '', 'email' => '', 'phone' => '', 'address' => ''];
+        $this->form = ['name' => '', 'industry' => '', 'leader_name' => '', 'mentor_name' => '', 'contact_name' => '', 'email' => '', 'phone' => '', 'address' => ''];
     }
 }

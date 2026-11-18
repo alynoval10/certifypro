@@ -3,13 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Services\CompanySpreadsheetService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CompanyController extends Controller
 {
+    public function template(CompanySpreadsheetService $spreadsheets): StreamedResponse
+    {
+        return $spreadsheets->template();
+    }
+
+    public function export(CompanySpreadsheetService $spreadsheets): StreamedResponse
+    {
+        return $spreadsheets->export();
+    }
+
     public function index(Request $request): View
     {
         $search = $request->string('q')->trim()->toString();

@@ -3,11 +3,15 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\FirstAdminController;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\StudentController;
+use App\Livewire\About;
 use App\Livewire\Assessments\Index as AssessmentsIndex;
 use App\Livewire\Certificates\Create as CreateCertificate;
 use App\Livewire\Certificates\Index as CertificatesIndex;
+use App\Livewire\Certificates\PrintBatch as PrintBatchCertificates;
 use App\Livewire\Certificates\Show as ShowCertificate;
+use App\Livewire\CertificateTemplates\Index as CertificateTemplatesIndex;
 use App\Livewire\Companies\Index as CompaniesIndex;
 use App\Livewire\Dashboard;
 use App\Livewire\Internships\Index as InternshipsIndex;
@@ -25,7 +29,7 @@ Route::get('/', function () {
     return redirect()->route(User::query()->exists() ? 'login' : 'setup');
 })->name('home');
 
-Route::view('/tentang-aplikasi', 'about')->name('about');
+Route::get('/tentang-aplikasi', About::class)->name('about');
 Route::get('/verifikasi/{verificationCode}', [CertificateController::class, 'verify'])
     ->whereUuid('verificationCode')
     ->name('certificates.verify');
@@ -45,6 +49,8 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/siswa/create', StudentsIndex::class)->name('students.create');
     Route::get('/siswa/{student}/edit', StudentsIndex::class)->name('students.edit');
     Route::get('/siswa-template.xlsx', [StudentController::class, 'downloadTemplate'])->name('students.template');
+    Route::get('/mitra-template.xlsx', [CompanyController::class, 'template'])->name('companies.template');
+    Route::get('/mitra-export.xlsx', [CompanyController::class, 'export'])->name('companies.export');
     Route::get('/mitra', CompaniesIndex::class)->name('companies.index');
     Route::get('/mitra/create', CompaniesIndex::class)->name('companies.create');
     Route::get('/mitra/{company}/edit', CompaniesIndex::class)->name('companies.edit');
@@ -54,7 +60,9 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/data-sekolah', SchoolStructureIndex::class)->name('school-structure.index');
     Route::get('/penilaian', AssessmentsIndex::class)->name('assessments.index');
     Route::get('/sertifikat', CertificatesIndex::class)->name('certificates.index');
+    Route::get('/sertifikat/cetak-massal', PrintBatchCertificates::class)->name('certificates.print-batch');
     Route::get('/sertifikat/buat', CreateCertificate::class)->name('certificates.create');
     Route::get('/sertifikat/{certificate}', ShowCertificate::class)->name('certificates.show');
+    Route::get('/template-sertifikat', CertificateTemplatesIndex::class)->name('certificate-templates.index');
     Route::get('/pengaturan', SettingsEdit::class)->name('settings.edit');
 });

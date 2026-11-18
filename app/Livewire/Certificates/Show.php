@@ -3,7 +3,9 @@
 namespace App\Livewire\Certificates;
 
 use App\Models\Certificate;
+use App\Models\CertificateTemplate;
 use App\Models\SchoolSetting;
+use App\Services\CertificateQrCode;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -45,11 +47,14 @@ class Show extends Component
             'internship.company',
             'internship.academicYear',
             'internship.scores.component',
+            'template',
         ])->findOrFail($this->certificate->id);
 
         return view('livewire.certificates.show', [
             'certificate' => $certificate,
             'school' => SchoolSetting::query()->first(),
+            'template' => $certificate->template ?? CertificateTemplate::query()->where('is_active', true)->first(),
+            'qrCode' => app(CertificateQrCode::class)->dataUri($certificate),
         ])->layout('layouts.certificate', ['title' => $certificate->certificate_number]);
     }
 }
