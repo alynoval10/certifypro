@@ -1,7 +1,60 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\FirstAdminController;
+use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\StudentController;
+use App\Livewire\Assessments\Index as AssessmentsIndex;
+use App\Livewire\Certificates\Create as CreateCertificate;
+use App\Livewire\Certificates\Index as CertificatesIndex;
+use App\Livewire\Certificates\Show as ShowCertificate;
+use App\Livewire\Companies\Index as CompaniesIndex;
+use App\Livewire\Dashboard;
+use App\Livewire\Internships\Index as InternshipsIndex;
+use App\Livewire\SchoolStructure\Index as SchoolStructureIndex;
+use App\Livewire\Settings\Edit as SettingsEdit;
+use App\Livewire\Students\Index as StudentsIndex;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+
+    return redirect()->route(User::query()->exists() ? 'login' : 'setup');
+})->name('home');
+
+Route::view('/tentang-aplikasi', 'about')->name('about');
+Route::get('/verifikasi/{verificationCode}', [CertificateController::class, 'verify'])
+    ->whereUuid('verificationCode')
+    ->name('certificates.verify');
+
+Route::middleware('guest')->group(function (): void {
+    Route::get('/setup', [FirstAdminController::class, 'create'])->middleware('throttle:3,1')->name('setup');
+    Route::post('/setup', [FirstAdminController::class, 'store'])->middleware('throttle:3,1')->name('setup.store');
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->middleware('throttle:login')->name('login.store');
+});
+
+Route::middleware('auth')->group(function (): void {
+    Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    Route::get('/siswa', StudentsIndex::class)->name('students.index');
+    Route::get('/siswa/create', StudentsIndex::class)->name('students.create');
+    Route::get('/siswa/{student}/edit', StudentsIndex::class)->name('students.edit');
+    Route::get('/siswa-template.xlsx', [StudentController::class, 'downloadTemplate'])->name('students.template');
+    Route::get('/mitra', CompaniesIndex::class)->name('companies.index');
+    Route::get('/mitra/create', CompaniesIndex::class)->name('companies.create');
+    Route::get('/mitra/{company}/edit', CompaniesIndex::class)->name('companies.edit');
+    Route::get('/prakerin', InternshipsIndex::class)->name('internships.index');
+    Route::get('/prakerin/create', InternshipsIndex::class)->name('internships.create');
+    Route::get('/prakerin/{internship}/edit', InternshipsIndex::class)->name('internships.edit');
+    Route::get('/data-sekolah', SchoolStructureIndex::class)->name('school-structure.index');
+    Route::get('/penilaian', AssessmentsIndex::class)->name('assessments.index');
+    Route::get('/sertifikat', CertificatesIndex::class)->name('certificates.index');
+    Route::get('/sertifikat/buat', CreateCertificate::class)->name('certificates.create');
+    Route::get('/sertifikat/{certificate}', ShowCertificate::class)->name('certificates.show');
+    Route::get('/pengaturan', SettingsEdit::class)->name('settings.edit');
 });

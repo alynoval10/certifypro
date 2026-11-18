@@ -1,0 +1,25 @@
+@extends('layouts.app')
+@section('title', $internship->exists ? 'Ubah Prakerin' : 'Catat Prakerin')
+@section('breadcrumb', 'Data Prakerin')
+@section('content')
+    <div class="mx-auto max-w-4xl"><a href="{{ route('internships.index') }}" class="back-link">← Kembali ke data Prakerin</a><div class="mt-4"><h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ $internship->exists ? 'Ubah catatan Prakerin' : 'Catat penempatan Prakerin' }}</h1><p class="mt-1 text-xs text-slate-500">Masukkan informasi penempatan dan periode praktik siswa.</p></div>@include('partials.flash')
+        <form method="POST" action="{{ $internship->exists ? route('internships.update', $internship) : route('internships.store') }}" class="form-card mt-6">
+            @csrf @if ($internship->exists) @method('PUT') @endif
+            <div class="grid gap-4 sm:grid-cols-2">
+                <label class="field-label">Peserta didik<select class="field-input" name="student_id" required><option value="">Pilih siswa</option>@foreach ($students as $student)<option value="{{ $student->id }}" @selected((string) old('student_id', $internship->student_id) === (string) $student->id)>{{ $student->name }} · {{ $student->student_number }}</option>@endforeach</select>@error('student_id')<span class="field-error">{{ $message }}</span>@enderror</label>
+                <label class="field-label">Mitra industri<select class="field-input" name="company_id" required><option value="">Pilih mitra</option>@foreach ($companies as $company)<option value="{{ $company->id }}" @selected((string) old('company_id', $internship->company_id) === (string) $company->id)>{{ $company->name }}</option>@endforeach</select>@error('company_id')<span class="field-error">{{ $message }}</span>@enderror</label>
+                <label class="field-label">Tahun ajaran<select class="field-input" name="academic_year_id" required><option value="">Pilih tahun ajaran</option>@foreach ($academicYears as $year)<option value="{{ $year->id }}" @selected((string) old('academic_year_id', $internship->academic_year_id ?: ($activeAcademicYear?->id)) === (string) $year->id)>{{ $year->name }}{{ $year->is_active ? ' · Aktif' : '' }}</option>@endforeach</select>@error('academic_year_id')<span class="field-error">{{ $message }}</span>@enderror<a href="{{ route('school-structure.index') }}#tahun-ajaran" class="mt-1 inline-block text-[10px] font-semibold text-indigo-600">Kelola tahun ajaran →</a></label>
+                <label class="field-label">Kompetensi / bagian<input class="field-input" name="department" value="{{ old('department', $internship->department) }}" maxlength="120" placeholder="Web Development"></label>
+                <label class="field-label">Pembimbing industri<input class="field-input" name="mentor_name" value="{{ old('mentor_name', $internship->mentor_name) }}" maxlength="255"></label>
+                <label class="field-label">Guru pembimbing<input class="field-input" name="school_supervisor" value="{{ old('school_supervisor', $internship->school_supervisor) }}" maxlength="255"></label>
+                <label class="field-label">Tanggal mulai<input class="field-input" type="date" name="start_date" value="{{ old('start_date', $internship->start_date?->format('Y-m-d')) }}" required>@error('start_date')<span class="field-error">{{ $message }}</span>@enderror</label>
+                <label class="field-label">Tanggal selesai<input class="field-input" type="date" name="end_date" value="{{ old('end_date', $internship->end_date?->format('Y-m-d')) }}" required>@error('end_date')<span class="field-error">{{ $message }}</span>@enderror</label>
+                <label class="field-label">Nilai akhir (0–100)<input class="field-input" type="number" name="score" min="0" max="100" step="0.01" value="{{ old('score', $internship->score) }}"></label>
+                <label class="field-label">Status<select class="field-input" name="status" required><option value="ongoing" @selected(old('status', $internship->status ?: 'ongoing') === 'ongoing')>Berjalan</option><option value="completed" @selected(old('status', $internship->status) === 'completed')>Selesai</option></select>@error('status')<span class="field-error">{{ $message }}</span>@enderror</label>
+                <label class="field-label sm:col-span-2">Catatan hasil<textarea class="field-input min-h-24" name="final_note" maxlength="4000">{{ old('final_note', $internship->final_note) }}</textarea></label>
+            </div>
+            <p class="mt-4 rounded-xl bg-indigo-50 px-4 py-3 text-[10px] leading-5 text-indigo-800">Sertifikat dapat diterbitkan setelah status Prakerin diubah menjadi <strong>Selesai</strong>.</p>
+            <div class="mt-6 flex justify-end gap-2 border-t border-slate-100 pt-5"><a href="{{ route('internships.index') }}" class="secondary-button">Batal</a><button type="submit" class="primary-button">{{ $internship->exists ? 'Simpan perubahan' : 'Simpan data Prakerin' }}</button></div>
+        </form>
+    </div>
+@endsection

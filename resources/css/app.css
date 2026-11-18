@@ -7,3 +7,166 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+@layer base {
+    html {
+        font-family: var(--font-sans);
+    }
+
+    ::selection {
+        color: #312e81;
+        background: #e0e7ff;
+    }
+}
+
+@layer components {
+    .sidebar-link {
+        @apply flex min-h-10 items-center gap-3 rounded-xl px-3 text-xs font-medium text-slate-500 transition;
+    }
+
+    .sidebar-link:hover {
+        @apply bg-slate-50 text-slate-800;
+    }
+
+    .sidebar-link[aria-disabled='true'] {
+        @apply cursor-default opacity-75;
+    }
+
+    .sidebar-link[aria-disabled='true']:hover {
+        @apply bg-transparent text-slate-500;
+    }
+
+    .sidebar-link-active {
+        @apply bg-indigo-50 font-semibold text-indigo-700;
+    }
+
+    .stat-card {
+        @apply rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-200/30 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-slate-200/50;
+    }
+
+    .stat-icon {
+        @apply flex size-10 items-center justify-center rounded-xl;
+    }
+
+    .trend-pill {
+        @apply rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-700;
+    }
+
+    .avatar {
+        @apply flex size-9 shrink-0 items-center justify-center rounded-full text-[10px] font-bold;
+    }
+
+    .status-badge {
+        @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[9px] font-semibold;
+    }
+
+    .activity-icon,
+    .about-icon {
+        @apply flex size-8 shrink-0 items-center justify-center rounded-lg;
+    }
+
+    .primary-button {
+        @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-xs font-semibold text-white shadow-sm shadow-indigo-600/15 transition hover:-translate-y-0.5 hover:bg-indigo-700;
+    }
+
+    .secondary-button {
+        @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700;
+    }
+
+    .search-input {
+        @apply h-10 min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-50;
+    }
+
+    .form-card {
+        @apply rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-200/30 sm:p-7;
+    }
+
+    .field-label {
+        @apply grid gap-2 text-xs font-semibold text-slate-700;
+    }
+
+    .field-input {
+        @apply min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-normal text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50;
+    }
+
+    .field-error {
+        @apply text-[10px] font-medium text-rose-600;
+    }
+
+    .data-table {
+        @apply w-full min-w-[760px] text-left text-xs;
+    }
+
+    .data-table thead {
+        @apply bg-slate-50/70 text-[9px] font-bold uppercase tracking-[0.12em] text-slate-400;
+    }
+
+    .data-table th {
+        @apply px-5 py-3.5;
+    }
+
+    .data-table td {
+        @apply border-t border-slate-100 px-5 py-4 text-slate-600;
+    }
+
+    .table-action {
+        @apply rounded-lg px-2.5 py-1.5 text-[10px] font-semibold text-indigo-600 transition hover:bg-indigo-50;
+    }
+
+    .empty-state {
+        @apply px-5 py-14 text-center;
+    }
+
+    .empty-state strong,
+    .empty-state span {
+        @apply block;
+    }
+
+    .empty-state strong {
+        @apply text-xs font-bold text-slate-700;
+    }
+
+    .empty-state span {
+        @apply mt-1 text-[11px] text-slate-400;
+    }
+
+    .back-link {
+        @apply inline-flex items-center gap-1 text-xs font-semibold text-slate-500 transition hover:text-indigo-600;
+    }
+}
+
+@keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(14deg); }
+    40% { transform: rotate(-8deg); }
+    60% { transform: rotate(12deg); }
+    80% { transform: rotate(-4deg); }
+}
+
+.animate-wave {
+    animation: wave 1.8s ease-in-out 0.4s 1;
+}
+
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 10mm;
+    }
+
+    body {
+        background: #fff !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .certificate-paper {
+        max-width: none !important;
+        border-width: 8px !important;
+        padding: 5mm !important;
+        box-shadow: none !important;
+    }
+}
