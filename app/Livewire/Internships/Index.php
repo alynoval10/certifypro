@@ -10,7 +10,6 @@ use App\Models\Teacher;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -123,7 +122,7 @@ class Index extends Component
                     'school_supervisor_id' => $teacher?->id,
                     'start_date' => $validated['batch']['start_date'],
                     'end_date' => $validated['batch']['end_date'],
-                    'status' => 'ongoing',
+                    'status' => $validated['batch']['end_date'] < today()->toDateString() ? 'completed' : 'ongoing',
                 ]);
                 $createdCount++;
             }
@@ -149,7 +148,7 @@ class Index extends Component
             return;
         }
         $this->editingId = $internship->id;
-        $this->form = $internship->only(['student_id', 'company_id', 'academic_year_id', 'department', 'mentor_name', 'school_supervisor', 'school_supervisor_id', 'start_date', 'end_date', 'final_note', 'status']);
+        $this->form = $internship->only(['student_id', 'company_id', 'academic_year_id', 'department', 'mentor_name', 'school_supervisor', 'school_supervisor_id', 'start_date', 'end_date', 'final_note']);
         $this->form['start_date'] = $internship->start_date?->format('Y-m-d');
         $this->form['end_date'] = $internship->end_date?->format('Y-m-d');
         $this->showForm = true;
@@ -174,11 +173,11 @@ class Index extends Component
             'form.start_date' => ['required', 'date', 'before_or_equal:form.end_date'],
             'form.end_date' => ['required', 'date', 'after_or_equal:form.start_date'],
             'form.final_note' => ['nullable', 'string', 'max:4000'],
-            'form.status' => ['required', Rule::in(['ongoing', 'completed'])],
         ])['form'];
         $data['academic_year'] = AcademicYear::query()->findOrFail($data['academic_year_id'])->name;
         $teacher = Teacher::query()->find($data['school_supervisor_id'] ?? null);
         $data['school_supervisor'] = $teacher?->name ?? ($internship->exists ? $internship->school_supervisor : null);
+        $data['status'] = $data['end_date'] < today()->toDateString() ? 'completed' : 'ongoing';
         $internship->fill($data)->save();
         $this->showForm = false;
         $this->resetForm();
@@ -214,6 +213,7 @@ class Index extends Component
 
     public function render(): View
     {
+        Internship::syncStatusesFromDate();
         $search = trim($this->search);
 
         return view('livewire.internships.index', [
@@ -245,7 +245,7 @@ class Index extends Component
         $this->form = [
             'student_id' => '', 'company_id' => '', 'academic_year_id' => AcademicYear::active()?->id ?? '',
             'department' => '', 'mentor_name' => '', 'school_supervisor_id' => '', 'start_date' => '',
-            'end_date' => '', 'final_note' => '', 'status' => 'ongoing',
+            'end_date' => '', 'final_note' => '',
         ];
         $this->batch = [
             'company_id' => '',

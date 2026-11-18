@@ -15,6 +15,7 @@ class Dashboard extends Component
 {
     public function render(): View
     {
+        Internship::syncStatusesFromDate();
         $activeAcademicYear = AcademicYear::active();
         $yearId = $activeAcademicYear?->id;
         $internships = Internship::query()->where('academic_year_id', $yearId);

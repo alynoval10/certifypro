@@ -6,9 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 
 class Internship extends Model
 {
+    public static function syncStatusesFromDate(): void
+    {
+        DB::table('internships')->whereDate('end_date', '<', today())->where('status', '!=', 'completed')->update(['status' => 'completed']);
+        DB::table('internships')->whereDate('end_date', '>=', today())->where('status', '!=', 'ongoing')->update(['status' => 'ongoing']);
+    }
+
     protected $fillable = [
         'student_id',
         'company_id',
