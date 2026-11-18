@@ -5,6 +5,8 @@ namespace App\Livewire\Internships;
 use App\Models\AcademicYear;
 use App\Models\Company;
 use App\Models\Internship;
+use App\Models\InternshipScore;
+use App\Models\ScoreComponent;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Contracts\View\View;
@@ -215,17 +217,27 @@ class Index extends Component
     {
         Internship::syncStatusesFromDate();
         $search = trim($this->search);
+        $internships = Internship::query()->with(['student', 'company', 'certificate', 'academicYear', 'schoolSupervisor'])
+            ->when($search !== '', function (Builder $query) use ($search): void {
+                $query->where(function (Builder $scope) use ($search): void {
+                    $scope->whereHas('student', fn (Builder $students) => $students->where('name', 'like', "%{$search}%")->orWhere('student_number', 'like', "%{$search}%"))
+                        ->orWhereHas('company', fn (Builder $companies) => $companies->where('name', 'like', "%{$search}%"));
+                });
+            })
+            ->when(in_array($this->statusFilter, ['ongoing', 'completed'], true), fn (Builder $query) => $query->where('status', $this->statusFilter))
+            ->latest('start_date')->latest('id')->paginate(12);
+        $activeComponentIds = ScoreComponent::query()->where('is_active', true)->pluck('id');
+        $readyInternshipIds = $activeComponentIds->isNotEmpty() && $internships->isNotEmpty()
+            ? InternshipScore::query()->whereIn('internship_id', $internships->getCollection()->pluck('id'))
+                ->whereIn('score_component_id', $activeComponentIds)->whereNotNull('score')
+                ->select('internship_id')->groupBy('internship_id')
+                ->havingRaw('COUNT(DISTINCT score_component_id) = ?', [$activeComponentIds->count()])
+                ->pluck('internship_id')->map(fn ($id): int => (int) $id)->all()
+            : [];
 
         return view('livewire.internships.index', [
-            'internships' => Internship::query()->with(['student', 'company', 'certificate', 'academicYear', 'schoolSupervisor'])
-                ->when($search !== '', function (Builder $query) use ($search): void {
-                    $query->where(function (Builder $scope) use ($search): void {
-                        $scope->whereHas('student', fn (Builder $students) => $students->where('name', 'like', "%{$search}%")->orWhere('student_number', 'like', "%{$search}%"))
-                            ->orWhereHas('company', fn (Builder $companies) => $companies->where('name', 'like', "%{$search}%"));
-                    });
-                })
-                ->when(in_array($this->statusFilter, ['ongoing', 'completed'], true), fn (Builder $query) => $query->where('status', $this->statusFilter))
-                ->latest('start_date')->latest('id')->paginate(12),
+            'internships' => $internships,
+            'readyInternshipIds' => $readyInternshipIds,
             'students' => Student::query()->orderBy('name')->get(),
             'companies' => Company::query()->orderBy('name')->get(),
             'academicYears' => AcademicYear::query()->orderByDesc('starts_on')->get(),

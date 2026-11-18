@@ -44,6 +44,12 @@ class Create extends Component
         $this->selectedInternshipIds = [];
     }
 
+    public function clearSearch(): void
+    {
+        $this->search = '';
+        $this->selectedInternshipIds = [];
+    }
+
     public function issue()
     {
         Internship::syncStatusesFromDate();
@@ -136,7 +142,14 @@ class Create extends Component
                     ->orWhereHas('company', fn ($companies) => $companies->where('name', 'like', "%{$term}%")));
             })
             ->orderByDesc('end_date')->get()
-            ->filter(fn (Internship $internship): bool => $activeComponents->every(fn ($componentId): bool => $internship->scores->contains(fn ($score): bool => $score->score_component_id === $componentId && $score->score !== null)))
+            ->filter(function (Internship $internship) use ($activeComponents): bool {
+                $completedComponentIds = $internship->scores
+                    ->whereNotNull('score')
+                    ->pluck('score_component_id')
+                    ->map(fn ($id): int => (int) $id);
+
+                return $activeComponents->map(fn ($id): int => (int) $id)->diff($completedComponentIds)->isEmpty();
+            })
             ->values();
     }
 }

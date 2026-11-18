@@ -13,7 +13,17 @@
                 <div class="mt-3 overflow-hidden rounded-xl border border-slate-200">
                     <div class="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-4 py-3 text-xs"><strong class="text-slate-800">Prakerin selesai dan nilai lengkap</strong><span class="rounded-full bg-indigo-100 px-2.5 py-1 font-semibold text-indigo-700">{{ $selectedCount }} dipilih</span></div>
                     @if ($internships->isEmpty())
-                        <div class="px-5 py-10 text-center"><p class="text-sm font-semibold text-slate-700">Belum ada siswa yang siap menerima sertifikat</p><p class="mt-1 text-xs text-slate-500">Pastikan tanggal Prakerin sudah lewat dan semua komponen nilai aktif sudah diinput.</p><a wire:navigate href="{{ route('internships.index') }}" class="mt-3 inline-block text-xs font-semibold text-indigo-600">Periksa data Prakerin →</a></div>
+                        <div class="px-5 py-10 text-center">
+                            @if (trim($search) !== '')
+                                <p class="text-sm font-semibold text-slate-700">Tidak ditemukan siswa siap terbit untuk “{{ $search }}”</p>
+                                <p class="mt-1 text-xs text-slate-500">Coba cari dengan nama siswa, NIS, atau nama DUDI yang lain.</p>
+                                <button type="button" wire:click="clearSearch" class="mt-3 text-xs font-semibold text-indigo-600">Hapus pencarian</button>
+                            @else
+                                <p class="text-sm font-semibold text-slate-700">Belum ada siswa yang siap menerima sertifikat</p>
+                                <p class="mt-1 text-xs text-slate-500">Siswa harus sudah menyelesaikan Prakerin, memiliki nilai akhir, dan seluruh komponen nilai aktif harus terisi.</p>
+                                <a wire:navigate href="{{ route('assessments.index') }}" class="mt-3 inline-block text-xs font-semibold text-indigo-600">Periksa penilaian →</a>
+                            @endif
+                        </div>
                     @else
                         <div class="max-h-[26rem] overflow-auto">
                             <table class="data-table w-full min-w-[700px]"><thead class="sticky top-0 bg-white"><tr><th class="w-10"></th><th>Siswa</th><th>DUDI</th><th>Tahun ajaran</th><th class="text-right">Nilai akhir</th></tr></thead><tbody>
