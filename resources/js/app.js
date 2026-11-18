@@ -35,6 +35,36 @@ passwordToggle?.addEventListener('click', () => {
     passwordToggle.setAttribute('aria-label', shouldShowPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
 });
 
+const themeToggles = document.querySelectorAll('[data-theme-toggle]');
+const themeIcons = document.querySelectorAll('[data-theme-icon]');
+
+const syncThemeControls = () => {
+    const isDark = document.documentElement.classList.contains('dark');
+
+    themeToggles.forEach((button) => {
+        button.setAttribute('aria-pressed', String(isDark));
+        button.setAttribute('aria-label', isDark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap');
+    });
+    themeIcons.forEach((icon) => {
+        icon.classList.toggle('hidden', icon.dataset.themeIcon === (isDark ? 'sun' : 'moon'));
+    });
+};
+
+themeToggles.forEach((button) => {
+    button.addEventListener('click', () => {
+        const isDark = !document.documentElement.classList.contains('dark');
+        document.documentElement.classList.toggle('dark', isDark);
+        try {
+            localStorage.setItem('certifypro-theme', isDark ? 'dark' : 'light');
+        } catch (_) {
+            // Keep the selected theme for the current page when storage is unavailable.
+        }
+        syncThemeControls();
+    });
+});
+
+syncThemeControls();
+
 document.querySelectorAll('form[data-confirm]').forEach((form) => {
     form.addEventListener('submit', (event) => {
         if (!window.confirm(form.dataset.confirm || 'Lanjutkan tindakan ini?')) {

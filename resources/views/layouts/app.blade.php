@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f5f7fb">
+    <script>try { document.documentElement.classList.toggle('dark', localStorage.getItem('certifypro-theme') === 'dark'); } catch (_) {}</script>
     <title>@isset($title){{ $title }}@else @yield('title', 'Dashboard')@endisset · {{ config('app.name', 'CertifyPro') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -20,7 +21,7 @@
             </a>
 
             <div class="px-4 pt-7">
-                <p class="px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Menu utama</p>
+                <p class="px-3 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Menu utama</p>
                 <nav class="mt-3 grid gap-1.5" aria-label="Navigasi utama">
                     <a wire:navigate href="{{ route('dashboard') }}" @class(['sidebar-link', 'sidebar-link-active' => request()->routeIs('dashboard')])>
                         <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="3.5" width="7" height="4" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="13.5" y="10.5" width="7" height="10" rx="1.6" stroke="currentColor" stroke-width="1.7"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6" stroke="currentColor" stroke-width="1.7"/></svg>
@@ -62,7 +63,7 @@
             </div>
 
             <div class="mt-8 px-4">
-                <p class="px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Lainnya</p>
+                <p class="px-3 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Lainnya</p>
                 <nav class="mt-3 grid gap-1.5" aria-label="Navigasi lainnya">
                     <a wire:navigate href="{{ route('about') }}" @class(['sidebar-link', 'sidebar-link-active' => request()->routeIs('about')])>
                         <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
@@ -98,6 +99,10 @@
                     <span class="text-sm font-semibold text-slate-800 sm:hidden">{{ $breadcrumb ?? $__env->yieldContent('breadcrumb', 'Ringkasan') }}</span>
                 </div>
                 <div class="flex items-center gap-3 sm:gap-5">
+                    <button type="button" data-theme-toggle aria-label="Aktifkan mode gelap" aria-pressed="false" class="flex size-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
+                        <svg data-theme-icon="moon" viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><path d="M20.2 15.1A8.4 8.4 0 0 1 8.9 3.8 8.6 8.6 0 1 0 20.2 15.1Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <svg data-theme-icon="sun" viewBox="0 0 24 24" fill="none" class="hidden size-[18px]" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                    </button>
                     <div class="relative hidden w-56 xl:block">
                         <svg viewBox="0 0 24 24" fill="none" class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4.25 4.25" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
                         <input type="search" placeholder="Cari sesuatu..." class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-xs outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-50">
