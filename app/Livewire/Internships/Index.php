@@ -6,6 +6,7 @@ use App\Models\AcademicYear;
 use App\Models\Company;
 use App\Models\Internship;
 use App\Models\Student;
+use App\Models\Teacher;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -98,14 +99,15 @@ class Index extends Component
             'batch.start_date' => ['required', 'date', 'before_or_equal:batch.end_date'],
             'batch.end_date' => ['required', 'date', 'after_or_equal:batch.start_date'],
             'batch.department' => ['nullable', 'string', 'max:120'],
-            'batch.school_supervisor' => ['nullable', 'string', 'max:255'],
+            'batch.school_supervisor_id' => ['nullable', 'integer', 'exists:teachers,id'],
             'selectedStudentIds' => ['required', 'array', 'min:1'],
             'selectedStudentIds.*' => ['required', 'integer', 'distinct', 'exists:students,id'],
         ]);
         $company = Company::query()->findOrFail($validated['batch']['company_id']);
         $academicYear = AcademicYear::query()->findOrFail($validated['batch']['academic_year_id']);
+        $teacher = Teacher::query()->find($validated['batch']['school_supervisor_id'] ?? null);
         $createdCount = 0;
-        DB::transaction(function () use ($validated, $company, $academicYear, &$createdCount): void {
+        DB::transaction(function () use ($validated, $company, $academicYear, $teacher, &$createdCount): void {
             foreach ($validated['selectedStudentIds'] as $studentId) {
                 if (Internship::query()->where('student_id', $studentId)->where('academic_year_id', $academicYear->id)->exists()) {
                     continue;
@@ -117,7 +119,8 @@ class Index extends Component
                     'academic_year' => $academicYear->name,
                     'department' => $validated['batch']['department'] ?? $company->industry,
                     'mentor_name' => $company->mentor_name,
-                    'school_supervisor' => $validated['batch']['school_supervisor'] ?? null,
+                    'school_supervisor' => $teacher?->name,
+                    'school_supervisor_id' => $teacher?->id,
                     'start_date' => $validated['batch']['start_date'],
                     'end_date' => $validated['batch']['end_date'],
                     'status' => 'ongoing',
@@ -146,7 +149,7 @@ class Index extends Component
             return;
         }
         $this->editingId = $internship->id;
-        $this->form = $internship->only(['student_id', 'company_id', 'academic_year_id', 'department', 'mentor_name', 'school_supervisor', 'start_date', 'end_date', 'final_note', 'status']);
+        $this->form = $internship->only(['student_id', 'company_id', 'academic_year_id', 'department', 'mentor_name', 'school_supervisor', 'school_supervisor_id', 'start_date', 'end_date', 'final_note', 'status']);
         $this->form['start_date'] = $internship->start_date?->format('Y-m-d');
         $this->form['end_date'] = $internship->end_date?->format('Y-m-d');
         $this->showForm = true;
@@ -167,13 +170,15 @@ class Index extends Component
             'form.academic_year_id' => ['required', 'integer', 'exists:academic_years,id'],
             'form.department' => ['nullable', 'string', 'max:120'],
             'form.mentor_name' => ['nullable', 'string', 'max:255'],
-            'form.school_supervisor' => ['nullable', 'string', 'max:255'],
+            'form.school_supervisor_id' => ['nullable', 'integer', 'exists:teachers,id'],
             'form.start_date' => ['required', 'date', 'before_or_equal:form.end_date'],
             'form.end_date' => ['required', 'date', 'after_or_equal:form.start_date'],
             'form.final_note' => ['nullable', 'string', 'max:4000'],
             'form.status' => ['required', Rule::in(['ongoing', 'completed'])],
         ])['form'];
         $data['academic_year'] = AcademicYear::query()->findOrFail($data['academic_year_id'])->name;
+        $teacher = Teacher::query()->find($data['school_supervisor_id'] ?? null);
+        $data['school_supervisor'] = $teacher?->name ?? ($internship->exists ? $internship->school_supervisor : null);
         $internship->fill($data)->save();
         $this->showForm = false;
         $this->resetForm();
@@ -212,7 +217,7 @@ class Index extends Component
         $search = trim($this->search);
 
         return view('livewire.internships.index', [
-            'internships' => Internship::query()->with(['student', 'company', 'certificate', 'academicYear'])
+            'internships' => Internship::query()->with(['student', 'company', 'certificate', 'academicYear', 'schoolSupervisor'])
                 ->when($search !== '', function (Builder $query) use ($search): void {
                     $query->where(function (Builder $scope) use ($search): void {
                         $scope->whereHas('student', fn (Builder $students) => $students->where('name', 'like', "%{$search}%")->orWhere('student_number', 'like', "%{$search}%"))
@@ -224,6 +229,7 @@ class Index extends Component
             'students' => Student::query()->orderBy('name')->get(),
             'companies' => Company::query()->orderBy('name')->get(),
             'academicYears' => AcademicYear::query()->orderByDesc('starts_on')->get(),
+            'teachers' => Teacher::query()->orderBy('name')->get(),
             'activeAcademicYear' => AcademicYear::active(),
             'availableStudents' => Student::query()->whereDoesntHave('internships', fn (Builder $query) => $query->where('academic_year_id', $this->batch['academic_year_id'] ?? AcademicYear::active()?->id))
                 ->when(trim($this->availableStudentSearch) !== '', function (Builder $query): void {
@@ -238,7 +244,7 @@ class Index extends Component
     {
         $this->form = [
             'student_id' => '', 'company_id' => '', 'academic_year_id' => AcademicYear::active()?->id ?? '',
-            'department' => '', 'mentor_name' => '', 'school_supervisor' => '', 'start_date' => '',
+            'department' => '', 'mentor_name' => '', 'school_supervisor_id' => '', 'start_date' => '',
             'end_date' => '', 'final_note' => '', 'status' => 'ongoing',
         ];
         $this->batch = [
@@ -246,7 +252,7 @@ class Index extends Component
             'academic_year_id' => AcademicYear::active()?->id ?? '',
             'department' => '',
             'mentor_name' => '',
-            'school_supervisor' => '',
+            'school_supervisor_id' => '',
             'start_date' => '',
             'end_date' => '',
         ];

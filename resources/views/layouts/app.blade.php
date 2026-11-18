@@ -50,6 +50,10 @@
                         <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><path d="M4 20V5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5V20M8 8h3M8 12h3M14 8h2M14 12h2M3 20h18M9 20v-4h6v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         <span class="flex-1">Data akademik</span>
                     </a>
+                    <a wire:navigate href="{{ route('teachers.index') }}" @class(['sidebar-link', 'sidebar-link-active' => request()->routeIs('teachers.*')])>
+                        <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 19.5v-1.2A4.3 4.3 0 0 1 7.8 14h2.4a4.3 4.3 0 0 1 4.3 4.3v1.2M16 8h4.5M18.25 5.75v4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                        <span class="flex-1">Guru pembimbing</span>
+                    </a>
                     <a wire:navigate href="{{ route('assessments.index') }}" @class(['sidebar-link', 'sidebar-link-active' => request()->routeIs('assessments.*')])>
                         <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><path d="M5 3.75h14a1.5 1.5 0 0 1 1.5 1.5v14.5H3.5V5.25A1.5 1.5 0 0 1 5 3.75Z" stroke="currentColor" stroke-width="1.7"/><path d="M7.5 8h9M7.5 12h4M7.5 16h4m4.5-4.5 1.2 1.2 2.3-2.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         <span class="flex-1">Penilaian siswa</span>

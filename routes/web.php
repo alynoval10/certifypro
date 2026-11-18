@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\FirstAdminController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
 use App\Livewire\About;
 use App\Livewire\Assessments\Index as AssessmentsIndex;
 use App\Livewire\Certificates\Create as CreateCertificate;
@@ -18,6 +19,7 @@ use App\Livewire\Internships\Index as InternshipsIndex;
 use App\Livewire\SchoolStructure\Index as SchoolStructureIndex;
 use App\Livewire\Settings\Edit as SettingsEdit;
 use App\Livewire\Students\Index as StudentsIndex;
+use App\Livewire\Teachers\Index as TeachersIndex;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -58,6 +60,9 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/prakerin/create', InternshipsIndex::class)->name('internships.create');
     Route::get('/prakerin/{internship}/edit', InternshipsIndex::class)->name('internships.edit');
     Route::get('/data-sekolah', SchoolStructureIndex::class)->name('school-structure.index');
+    Route::get('/guru-pembimbing-template.xlsx', [TeacherController::class, 'template'])->name('teachers.template');
+    Route::get('/guru-pembimbing-export.xlsx', [TeacherController::class, 'export'])->name('teachers.export');
+    Route::get('/guru-pembimbing', TeachersIndex::class)->name('teachers.index');
     Route::get('/penilaian', AssessmentsIndex::class)->name('assessments.index');
     Route::get('/sertifikat', CertificatesIndex::class)->name('certificates.index');
     Route::get('/sertifikat/cetak-massal', PrintBatchCertificates::class)->name('certificates.print-batch');

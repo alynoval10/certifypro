@@ -17,6 +17,7 @@ class Internship extends Model
         'department',
         'mentor_name',
         'school_supervisor',
+        'school_supervisor_id',
         'start_date',
         'end_date',
         'score',
@@ -46,6 +47,11 @@ class Internship extends Model
     public function academicYear(): BelongsTo
     {
         return $this->belongsTo(AcademicYear::class);
+    }
+
+    public function schoolSupervisor(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class, 'school_supervisor_id');
     }
 
     public function certificate(): HasOne
