@@ -9,7 +9,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-screen bg-[#f5f7fb] text-slate-800 antialiased">
+<body class="min-h-screen bg-[#f5f7fb] text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-100">
     <div class="min-h-screen lg:flex">
         <div class="fixed inset-0 z-40 hidden bg-slate-950/40 backdrop-blur-[2px] lg:hidden" data-sidebar-overlay></div>
         <aside class="fixed inset-y-0 left-0 z-50 flex w-[264px] -translate-x-full flex-col border-r border-slate-200/80 bg-white transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0" data-sidebar>
@@ -73,6 +73,10 @@
                         <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="m19.4 15 .1.1a1.7 1.7 0 0 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 0 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 0 1 0-3.4h.2A1.7 1.7 0 0 0 5.4 5.8l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 0 1 3.4 0v.2A1.7 1.7 0 0 0 17 3.4l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 0 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/></svg>
                         <span>Pengaturan sekolah</span>
                     </a>
+                    <a wire:navigate href="{{ route('backups.index') }}" @class(['sidebar-link', 'sidebar-link-active' => request()->routeIs('backups.*')])>
+                        <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v10a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-10Z" stroke="currentColor" stroke-width="1.7"/><path d="M8 5V3.5h8V5m-4 5v6m-2.5-2.5L12 16l2.5-2.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>Backup data</span>
+                    </a>
                 </nav>
             </div>
 
@@ -107,9 +111,9 @@
                         <svg viewBox="0 0 24 24" fill="none" class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4.25 4.25" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
                         <input type="search" placeholder="Cari sesuatu..." class="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-xs outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-4 focus:ring-indigo-50">
                     </div>
-                    <button type="button" class="relative flex size-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100" aria-label="Notifikasi">
-                        <svg viewBox="0 0 24 24" fill="none" class="size-5" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="absolute right-2 top-2 size-2 rounded-full border-2 border-white bg-rose-500"></span>
-                    </button>
+                    @auth
+                        <livewire:notifications.dropdown />
+                    @endauth
                     <span class="hidden h-8 w-px bg-slate-200 sm:block"></span>
                     <button type="button" class="flex items-center gap-2.5 text-left">
                         <span class="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-xs font-bold text-white ring-2 ring-indigo-100">{{ auth()->user() ? mb_strtoupper(mb_substr(auth()->user()->name, 0, 2)) : 'CP' }}</span>

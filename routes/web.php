@@ -8,6 +8,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Livewire\About;
 use App\Livewire\Assessments\Index as AssessmentsIndex;
+use App\Livewire\Backups\Index as BackupsIndex;
 use App\Livewire\Certificates\Create as CreateCertificate;
 use App\Livewire\Certificates\Index as CertificatesIndex;
 use App\Livewire\Certificates\PrintBatch as PrintBatchCertificates;
@@ -70,4 +71,5 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/sertifikat/{certificate}', ShowCertificate::class)->name('certificates.show');
     Route::get('/template-sertifikat', CertificateTemplatesIndex::class)->name('certificate-templates.index');
     Route::get('/pengaturan', SettingsEdit::class)->name('settings.edit');
+    Route::get('/backup-data', BackupsIndex::class)->name('backups.index');
 });

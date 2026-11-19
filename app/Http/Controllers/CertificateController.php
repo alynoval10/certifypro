@@ -97,7 +97,7 @@ class CertificateController extends Controller
     public function verify(string $verificationCode): View
     {
         $certificate = Certificate::query()
-            ->with(['internship.student', 'internship.company'])
+            ->with(['internship.student', 'internship.company', 'internship.academicYear'])
             ->where('verification_code', $verificationCode)
             ->firstOrFail();
 
