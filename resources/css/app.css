@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -159,16 +160,15 @@ html.dark [class~="bg-white/90"] {
 
 html.dark [class~="bg-[#f5f7fb]"],
 html.dark [class~="bg-slate-50"],
+html.dark [class~="bg-slate-50/60"],
 html.dark [class~="bg-slate-50/70"],
-html.dark [class~="bg-slate-50/80"],
-html.dark [class*="bg-white/"] {
+html.dark [class~="bg-slate-50/80"] {
     background-color: #0f1928 !important;
 }
 
 html.dark [class~="bg-slate-100"],
 html.dark [class~="bg-slate-200"],
-html.dark [class~="bg-indigo-100"],
-html.dark [class*="bg-"][class*="-100"] {
+html.dark [class~="bg-indigo-100"] {
     background-color: #1c293b !important;
 }
 
@@ -240,17 +240,30 @@ html.dark [class~="border-slate-300"] {
     border-color: #29364a !important;
 }
 
-html.dark [class*="border-"][class*="-100"],
-html.dark [class*="border-"][class*="-200"] {
-    border-color: #34435a !important;
-}
-
 html.dark [class~="border-indigo-100"],
 html.dark [class~="border-indigo-200"],
 html.dark [class~="border-emerald-100"],
 html.dark [class~="border-amber-100"],
+html.dark [class~="border-emerald-200"],
+html.dark [class~="border-amber-200"],
 html.dark [class~="border-rose-100"],
-html.dark [class~="border-sky-100"] {
+html.dark [class~="border-rose-200"],
+html.dark [class~="border-sky-100"],
+html.dark [class~="border-sky-200"],
+html.dark [class~="border-blue-100"],
+html.dark [class~="border-blue-200"],
+html.dark [class~="border-violet-100"],
+html.dark [class~="border-violet-200"],
+html.dark [class~="border-purple-100"],
+html.dark [class~="border-purple-200"],
+html.dark [class~="border-cyan-100"],
+html.dark [class~="border-cyan-200"],
+html.dark [class~="border-teal-100"],
+html.dark [class~="border-teal-200"],
+html.dark [class~="border-green-100"],
+html.dark [class~="border-green-200"],
+html.dark [class~="border-red-100"],
+html.dark [class~="border-red-200"] {
     border-color: #34435a !important;
 }
 
@@ -318,10 +331,6 @@ html.dark .primary-button {
     color: #fff;
 }
 
-html.dark [class*="bg-"][class*="-50"] {
-    background-color: #1a2433 !important;
-}
-
 html.dark .secondary-button,
 html.dark .search-input,
 html.dark .field-input,
@@ -339,24 +348,52 @@ html.dark textarea::placeholder {
 }
 
 html.dark [class~="bg-indigo-50"],
+html.dark [class~="bg-indigo-50/40"],
+html.dark [class~="bg-indigo-50/60"],
 html.dark [class~="bg-indigo-50/70"] {
     background-color: #201f43 !important;
 }
 
-html.dark [class~="bg-emerald-50"] {
+html.dark [class~="bg-indigo-100"] {
+    background-color: #272554 !important;
+}
+
+html.dark [class~="bg-emerald-50"],
+html.dark [class~="bg-emerald-50/80"] {
     background-color: #12352f !important;
 }
 
-html.dark [class~="bg-amber-50"] {
+html.dark [class~="bg-emerald-100"] {
+    background-color: #12352f !important;
+}
+
+html.dark [class~="bg-amber-50"],
+html.dark [class~="bg-amber-50/80"] {
+    background-color: #3b2d19 !important;
+}
+
+html.dark [class~="bg-amber-100"],
+html.dark [class~="bg-amber-100/80"] {
     background-color: #3b2d19 !important;
 }
 
 html.dark [class~="bg-sky-50"],
+html.dark [class~="bg-sky-50/80"],
 html.dark [class~="bg-blue-50"] {
     background-color: #122c40 !important;
 }
 
+html.dark [class~="bg-sky-100"],
+html.dark [class~="bg-blue-100"] {
+    background-color: #122c40 !important;
+}
+
 html.dark [class~="bg-rose-50"] {
+    background-color: #3d202b !important;
+}
+
+html.dark [class~="bg-rose-100"],
+html.dark [class~="bg-red-100"] {
     background-color: #3d202b !important;
 }
 
@@ -365,8 +402,18 @@ html.dark [class~="bg-purple-50"] {
     background-color: #292340 !important;
 }
 
+html.dark [class~="bg-violet-100"],
+html.dark [class~="bg-purple-100"] {
+    background-color: #292340 !important;
+}
+
 html.dark [class~="bg-teal-50"],
 html.dark [class~="bg-cyan-50"] {
+    background-color: #143139 !important;
+}
+
+html.dark [class~="bg-teal-100"],
+html.dark [class~="bg-cyan-100"] {
     background-color: #143139 !important;
 }
 
