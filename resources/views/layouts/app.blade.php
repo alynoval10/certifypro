@@ -65,6 +65,10 @@
             <div class="mt-8 px-4">
                 <p class="px-3 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Lainnya</p>
                 <nav class="mt-3 grid gap-1.5" aria-label="Navigasi lainnya">
+                    <a wire:navigate href="{{ route('users.index') }}" @class(['sidebar-link', 'sidebar-link-active' => request()->routeIs('users.*')])>
+                        <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><circle cx="9" cy="8" r="3.25" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 19.5v-1.25A4.25 4.25 0 0 1 7.75 14h2.5a4.25 4.25 0 0 1 4.25 4.25v1.25M16 8h4.5M18.25 5.75v4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                        <span>Pengguna</span>
+                    </a>
                     <a wire:navigate href="{{ route('about') }}" @class(['sidebar-link', 'sidebar-link-active' => request()->routeIs('about')])>
                         <svg viewBox="0 0 24 24" fill="none" class="size-[18px]" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
                         <span>Tentang aplikasi</span>

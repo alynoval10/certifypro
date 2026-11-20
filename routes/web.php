@@ -21,6 +21,7 @@ use App\Livewire\SchoolStructure\Index as SchoolStructureIndex;
 use App\Livewire\Settings\Edit as SettingsEdit;
 use App\Livewire\Students\Index as StudentsIndex;
 use App\Livewire\Teachers\Index as TeachersIndex;
+use App\Livewire\Users\Index as UsersIndex;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -71,5 +72,6 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/sertifikat/{certificate}', ShowCertificate::class)->name('certificates.show');
     Route::get('/template-sertifikat', CertificateTemplatesIndex::class)->name('certificate-templates.index');
     Route::get('/pengaturan', SettingsEdit::class)->name('settings.edit');
+    Route::get('/pengguna', UsersIndex::class)->name('users.index');
     Route::get('/backup-data', BackupsIndex::class)->name('backups.index');
 });
