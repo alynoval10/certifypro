@@ -5,7 +5,7 @@
             <h1 class="mt-2 text-2xl font-bold tracking-tight text-slate-900">Pengguna</h1>
             <p class="mt-1 text-xs text-slate-500">Buat dan kelola akun yang dapat masuk ke CertifyPro.</p>
         </div>
-        <button wire:click="create" class="primary-button">＋ Buat pengguna</button>
+        <a href="{{ route('users.create') }}" class="primary-button">＋ Buat pengguna</a>
     </div>
 
     @include('partials.flash')

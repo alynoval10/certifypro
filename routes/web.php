@@ -6,6 +6,7 @@ use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\UserController;
 use App\Livewire\About;
 use App\Livewire\Assessments\Index as AssessmentsIndex;
 use App\Livewire\Backups\Index as BackupsIndex;
@@ -73,5 +74,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/template-sertifikat', CertificateTemplatesIndex::class)->name('certificate-templates.index');
     Route::get('/pengaturan', SettingsEdit::class)->name('settings.edit');
     Route::get('/pengguna', UsersIndex::class)->name('users.index');
+    Route::get('/pengguna/buat', [UserController::class, 'create'])->name('users.create');
+    Route::post('/pengguna', [UserController::class, 'store'])->name('users.store');
     Route::get('/backup-data', BackupsIndex::class)->name('backups.index');
 });
