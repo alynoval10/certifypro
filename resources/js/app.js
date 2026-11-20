@@ -1,19 +1,34 @@
-const sidebar = document.querySelector('[data-sidebar]');
-const sidebarOverlay = document.querySelector('[data-sidebar-overlay]');
-const sidebarToggle = document.querySelector('[data-sidebar-toggle]');
-
 const closeSidebar = () => {
+    const sidebar = document.querySelector('[data-sidebar]');
+    const sidebarOverlay = document.querySelector('[data-sidebar-overlay]');
+
     sidebar?.classList.add('-translate-x-full');
     sidebarOverlay?.classList.add('hidden');
     document.body.classList.remove('overflow-hidden');
 };
 
-sidebarToggle?.addEventListener('click', () => {
-    sidebar?.classList.remove('-translate-x-full');
-    sidebarOverlay?.classList.remove('hidden');
-    document.body.classList.add('overflow-hidden');
+document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) {
+        return;
+    }
+
+    const sidebar = document.querySelector('[data-sidebar]');
+    const sidebarOverlay = document.querySelector('[data-sidebar-overlay]');
+
+    if (event.target.closest('[data-sidebar-toggle]')) {
+        sidebar?.classList.remove('-translate-x-full');
+        sidebarOverlay?.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+
+        return;
+    }
+
+    if (event.target.closest('[data-sidebar-overlay]') || event.target.closest('[data-sidebar] a')) {
+        closeSidebar();
+    }
 });
-sidebarOverlay?.addEventListener('click', closeSidebar);
+
+document.addEventListener('livewire:navigated', closeSidebar);
 
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
