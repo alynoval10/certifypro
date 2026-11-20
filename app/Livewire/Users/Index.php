@@ -47,7 +47,7 @@ class Index extends Component
         $validated = $this->validate([
             'form.name' => ['required', 'string', 'max:255'],
             'form.email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user)],
-            'form.password' => [$this->editingId ? 'nullable' : 'required', 'string', 'min:10', 'max:255'],
+            'form.password' => [$this->editingId ? 'nullable' : 'required', 'string', 'min:6', 'max:255'],
         ])['form'];
 
         $user->name = $validated['name'];

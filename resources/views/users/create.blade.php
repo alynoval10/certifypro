@@ -19,8 +19,8 @@
                 @csrf
                 <label class="field-label">Nama lengkap<input class="field-input" name="name" value="{{ old('name') }}" autocomplete="name" required maxlength="255"></label>
                 <label class="field-label">Email login<input class="field-input" type="email" name="email" value="{{ old('email') }}" autocomplete="email" required maxlength="255"></label>
-                <label class="field-label">Kata sandi (minimal 10 karakter)<input class="field-input" type="password" name="password" autocomplete="new-password" required minlength="10"></label>
-                <label class="field-label">Ulangi kata sandi<input class="field-input" type="password" name="password_confirmation" autocomplete="new-password" required minlength="10"></label>
+                <label class="field-label">Kata sandi (minimal 6 karakter)<input class="field-input" type="password" name="password" autocomplete="new-password" required minlength="6"></label>
+                <label class="field-label">Ulangi kata sandi<input class="field-input" type="password" name="password_confirmation" autocomplete="new-password" required minlength="6"></label>
                 <div class="mt-2 flex justify-end gap-2 border-t border-slate-100 pt-5">
                     <a href="{{ route('users.index') }}" class="secondary-button">Batal</a>
                     <button type="submit" class="primary-button">Simpan pengguna</button>

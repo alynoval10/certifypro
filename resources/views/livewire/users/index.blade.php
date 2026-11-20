@@ -44,7 +44,7 @@
                 <form wire:submit="save" class="mt-5 grid gap-4">
                     <label class="field-label">Nama lengkap<input class="field-input" wire:model="form.name" autocomplete="name" required maxlength="255">@error('form.name')<span class="field-error">{{ $message }}</span>@enderror</label>
                     <label class="field-label">Email login<input class="field-input" type="email" wire:model="form.email" autocomplete="email" required maxlength="255">@error('form.email')<span class="field-error">{{ $message }}</span>@enderror</label>
-                    <label class="field-label">Kata sandi{{ $editingId ? ' baru (opsional)' : ' (minimal 10 karakter)' }}<input class="field-input" type="password" wire:model="form.password" autocomplete="new-password" @required(! $editingId) minlength="10">@error('form.password')<span class="field-error">{{ $message }}</span>@enderror</label>
+                    <label class="field-label">Kata sandi{{ $editingId ? ' baru (opsional)' : ' (minimal 6 karakter)' }}<input class="field-input" type="password" wire:model="form.password" autocomplete="new-password" @required(! $editingId) minlength="6">@error('form.password')<span class="field-error">{{ $message }}</span>@enderror</label>
                     <div class="mt-2 flex justify-end gap-2 border-t border-slate-100 pt-5"><button type="button" wire:click="closeForm" class="secondary-button">Batal</button><button type="submit" class="primary-button" wire:loading.attr="disabled">Simpan pengguna</button></div>
                 </form>
             </section>
