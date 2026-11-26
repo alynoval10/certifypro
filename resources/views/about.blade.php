@@ -31,7 +31,7 @@
             </div>
         </section>
         <section class="mt-5 flex flex-col justify-between gap-3 rounded-2xl border border-indigo-100 bg-indigo-50/70 p-5 sm:flex-row sm:items-center sm:px-7">
-            <div><p class="text-[10px] font-bold uppercase tracking-[0.16em] text-indigo-600">Pembuat aplikasi</p><a href="https://www.instagram.com/alynoval/" target="_blank" rel="noopener noreferrer" class="mt-1 inline-flex text-sm font-bold text-slate-900 hover:text-indigo-700">Noval Aly, S.T. ↗</a></div>
-            <a href="https://www.instagram.com/alynoval/" target="_blank" rel="noopener noreferrer" class="primary-button">Kunjungi Instagram ↗</a>
+            <div><p class="text-[10px] font-bold uppercase tracking-[0.16em] text-indigo-600">Pembuat aplikasi</p><a href="https://www.instagram.com/alynoval10/" target="_blank" rel="noopener noreferrer" class="mt-1 inline-flex text-sm font-bold text-slate-900 hover:text-indigo-700">Noval Aly, S.T. ↗</a></div>
+            <a href="https://www.instagram.com/alynoval10/" target="_blank" rel="noopener noreferrer" class="primary-button">Kunjungi Instagram ↗</a>
         </section>
     </div>
