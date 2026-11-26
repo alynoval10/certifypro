@@ -12,8 +12,8 @@
 <body class="min-h-screen bg-[#f5f7fb] text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-100">
     <div class="min-h-screen lg:flex">
         <div class="fixed inset-0 z-40 hidden bg-slate-950/40 backdrop-blur-[2px] lg:hidden" data-sidebar-overlay></div>
-        <aside class="fixed inset-y-0 left-0 z-50 flex w-[264px] -translate-x-full flex-col border-r border-slate-200/80 bg-white transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0" data-sidebar>
-            <a href="{{ route('dashboard') }}" class="flex h-[84px] items-center gap-3 border-b border-slate-100 px-7" aria-label="CertifyPro, ke dashboard">
+        <aside class="fixed inset-y-0 left-0 z-50 flex w-[264px] -translate-x-full flex-col overflow-y-auto overscroll-contain border-r border-slate-200/80 bg-white transition-transform duration-300 lg:static lg:z-auto lg:translate-x-0" data-sidebar>
+            <a wire:navigate href="{{ route('dashboard') }}" class="flex h-[84px] shrink-0 items-center gap-3 border-b border-slate-100 px-7" aria-label="CertifyPro, ke dashboard">
                 <span class="flex size-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
                     <svg viewBox="0 0 24 24" fill="none" class="size-5" aria-hidden="true"><path d="M7 3.75h7l4 4v12.5H7a2 2 0 0 1-2-2v-12.5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3.75v4h4M8.5 13h7M8.5 16.5h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="m15.25 18.5 1.35 1.35 2.9-3.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </span>
@@ -91,7 +91,7 @@
                     </div>
                     <p class="mt-3 text-xs font-bold text-slate-800">Ruang berkembang</p>
                     <p class="mt-1 text-[11px] leading-5 text-slate-500">Kelola pengalaman Prakerin dengan lebih rapi dan terukur.</p>
-                    <a href="{{ route('about') }}" class="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600">Kenali CertifyPro <span aria-hidden="true">→</span></a>
+                    <a wire:navigate href="{{ route('about') }}" class="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600">Kenali CertifyPro <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="mt-4 flex items-center gap-2 px-2 text-[10px] text-slate-400"><span class="size-1.5 rounded-full bg-emerald-500"></span> Sistem siap digunakan <span class="ml-auto">v1.0</span></div>
             </div>
@@ -126,7 +126,7 @@
                     @auth
                         <form method="POST" action="{{ route('logout') }}" class="block">@csrf<button type="submit" class="rounded-lg px-2 py-1.5 text-[10px] font-semibold text-slate-500 hover:bg-slate-100 hover:text-rose-600">Keluar</button></form>
                     @else
-                        <a href="{{ route('login') }}" class="hidden rounded-lg px-2 py-1.5 text-[10px] font-semibold text-indigo-600 hover:bg-indigo-50 sm:block">Masuk</a>
+                        <a wire:navigate href="{{ route('login') }}" class="hidden rounded-lg px-2 py-1.5 text-[10px] font-semibold text-indigo-600 hover:bg-indigo-50 sm:block">Masuk</a>
                     @endauth
                 </div>
             </header>
@@ -138,7 +138,7 @@
                 @endif
                 <footer class="mt-10 flex flex-col gap-2 border-t border-slate-200/80 pt-5 text-[11px] text-slate-400 sm:flex-row sm:items-center sm:justify-between">
                     <span>© {{ date('Y') }} CertifyPro · Sistem Manajemen Prakerin</span>
-                    <div class="flex gap-4"><a href="{{ route('about') }}" class="font-medium transition hover:text-indigo-600">Tentang aplikasi</a><a href="{{ route('settings.edit') }}" class="font-medium transition hover:text-indigo-600">Pengaturan</a></div>
+                    <div class="flex gap-4"><a wire:navigate href="{{ route('about') }}" class="font-medium transition hover:text-indigo-600">Tentang aplikasi</a><a wire:navigate href="{{ route('settings.edit') }}" class="font-medium transition hover:text-indigo-600">Pengaturan</a></div>
                 </footer>
             </main>
         </div>
